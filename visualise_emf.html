@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head><!--imperial decoration-->
+    <title>EMF</title>
+    <!--css link-->
+    <link rel="stylesheet" href="https://rawgit.com/cydcowley/public-test-data/master/Style2.css">
+    <!--icon-->
+    <link rel="icon" href="https://www.imperial.ac.uk/T4Assets/favicon-196x196.png" type="image/x-icon">
+    <!--Required JS resources-->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.1/p5.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!--import numeric--><script src="http://www.numericjs.com/lib/numeric-1.2.6.min.js"></script>
+
+    <script type="text/x-mathjax-config">
+ MathJax.Hub.Config({
+   tex2jax: {
+     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+     processEscapes: true
+   }
+ });
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_HTML">
+</script>
+      <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script><!--canvasJS-->
+    <!-- mathjax tutorial http://www.onemathematicalcat.org/MathJaxDocumentation/TeXSyntax.htm#E -->
+
+</head>
+
+  <body>
+        <h1>Motional EMF</h1>
+
+        <div id="field" style="width:500px; height:500px; position:absolute; top:210px; left:80px;"></div>
+
+        <div style="width:600px; position:absolute; top:100px">
+        <p>A closed conducting loop moves without friction
+horizontally. If the circuit moves at velocity v a motional emf is generated causing current to flow around
+the circuit as follows: \epsilon = \oint(\vec v\times\vec B).\vec dl</p></div>
+
+      <div id="chartContainer" style="width:500px; height:400px; left:1200px; top:243px; position:absolute;"></div>
+
+        <!--<div id='myDiv' style="position:absolute; width: 440px; left: 870px; top: 190px"></div>-->
+        <div style="position:absolute; left:185px; top:570px"><p id="demo"></p></div>
+
+        <div class="six columns" style= "position:absolute; left:630px; top:250px">
+
+        <div style= "width: 400px">Magnetic Field
+          <input type="range" min="0" max="50" class="slider" id="magnet">
+          <span class="sliderMin">0T</span><span class="sliderMax">50T</span>
+        </div>
+
+        <div style= "width: 400px">Width
+          <input type="range" min="0" max="50" class="slider" id="width">
+          <span class="sliderMin">0cm</span><span class="sliderMax">50cm</span>
+        </div>
+
+        <div style="width:400px">Height
+          <input type="range" min="1" max="50" class="slider" id="height">
+          <span class="sliderMin">0cm</span><span class="sliderMax">50cm</span>
+        </div>
+
+      </div>
+
+        <!--<div id="graph" style="width: 400px; height:300px; position:absolute; left:900px; top:200px">Value of EMF</div>-->
+
+<script src="p5emf.js"></script>
+
+        <script>
+          window.onload = function () {
+
+var dps = []; // dataPoints
+var chart = new CanvasJS.Chart("chartContainer", {
+	title :{
+		text: "value of emf"
+	},
+	axisY: {
+		includeZero: false
+	},
+	data: [{
+		type: "line",
+		dataPoints: dps
+	}]
+});
+
+var xVal = 0;
+var yVal = 0;
+var updateInterval = 1000/60;
+var dataLength = 200;
+
+var updateChart = function (count) {
+
+	count = count || 1;
+
+	for (var j = 0; j < count; j++) {
+
+	    var W = document.getElementById('width').value;
+
+        if( (mouseX>75-W/2 && mouseX<75+W/2) || (mouseX>375-W/2 && mouseX<375+W/2) ) {
+            yVal = document.getElementById('magnet').value * document.getElementById('height').value * (mouseX - pmouseX);
+        }
+        else{
+            yVal = 0;
+        }
+
+		dps.push({
+			x: xVal,
+			y: yVal
+		});
+		xVal++;
+	}
+
+	if (dps.length > dataLength) {
+		dps.shift();
+	}
+
+	chart.render();
+};
+
+updateChart(dataLength);
+setInterval(function(){updateChart()}, updateInterval);
+
+}
+      </script>
+
+  </body>
+</html>
